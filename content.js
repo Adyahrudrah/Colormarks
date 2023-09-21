@@ -11,18 +11,38 @@
             const titleBtn = document.createElement('button')
             const title = bookmark.title || '';
             titleBtn.textContent = title;
-            const bgColor = getRandomAlphaMaterialColor('0.5');
+            const bgColor = getRandomAlphaMaterialColor('0.4');
             titleBtn.style.backgroundColor = bgColor;
             bookmarksTitleContainer.appendChild(titleBtn)
-            titleBtn.addEventListener('click',  function (){
+
+            titleBtn.addEventListener('dragover', (event) => {
+              event.preventDefault();
+            });
+
+            titleBtn.addEventListener('drop', (event) => {
+              event.preventDefault();
+              const bookmarkId = event.dataTransfer.getData('text/plain');
+              const parentId = bookmark.id;
+              chrome.bookmarks.move(bookmarkId, { parentId: parentId }, function () {
+                console.log('Bookmark moved successfully:');
+            });
+          });
+
+            titleBtn.addEventListener('click',   () =>{
+              const bookmarksContainer = document.querySelector('.bookmarks-container');
               const getAllLiItems = document.querySelectorAll('.bookmarks-container li');
               const getAllBtnItems = document.querySelectorAll('.bookmarks-container button');
-              getAllLiItems.forEach((li) =>{
-                  bookmarksContainer.removeChild(li)
+              getAllLiItems.forEach((li) => {
+                if (bookmarksContainer.contains(li)) {
+                  bookmarksContainer.removeChild(li);
+                }
               });
-              getAllBtnItems.forEach((btn) =>{
-                bookmarksContainer.removeChild(btn)
-            });
+              
+              getAllBtnItems.forEach((btn) => {
+                if (bookmarksContainer.contains(btn)) {
+                  bookmarksContainer.removeChild(btn);
+                }
+              });
                renderBookmarksHeadsandLinks(bookmark, bgColor)
             })
             renderBookmarks(bookmark.children)
@@ -41,22 +61,74 @@
             const link = document.createElement('a');
             const title_raw = bookmark.children[i].title || '';
             const regexValPartOne = /(.*)[|:-](.*)/
-            
             const regexedPartOne =  title_raw.replace(regexValPartOne, "$1")
             const regexedPartTwo =  title_raw.replace(regexValPartOne, "$2")
             link.href = bookmark.children[i].url;
+
             if (regexedPartTwo !== regexedPartOne){
               link.textContent = regexedPartOne;
               const spanText = document.createElement('span')
               spanText.textContent = ' | '+regexedPartTwo;
               link.appendChild(spanText)
             }
+
             else {
               link.textContent = title_raw;
             }
             
             link.target = "_blank";
+           
+         
             li.appendChild(link);
+            link.draggable= 'True';
+            link.addEventListener('dragstart', (event) => {
+              event.dataTransfer.setData('text/plain', bookmark.children[i].id);
+          });
+            const deleteBookmarkBtn = document.createElement('button');
+            deleteBookmarkBtn.textContent = "x";
+            deleteBookmarkBtn.classList.add('del-btn');
+            li.appendChild(deleteBookmarkBtn);
+            deleteBookmarkBtn.addEventListener('click', ()=>{
+              const idTobeDeleted = bookmark.children[i].id
+              li.classList.add('displaced-li');
+              const deleteModal = document.createElement('div');
+              deleteModal.classList.add('delete-modal')
+              const isOK = document.createElement('button');
+              isOK.classList.add('ok');
+              isOK.textContent = 'Yes';
+              const isNo = document.createElement('button');
+              isNo.classList.add('No');
+              isNo.textContent = 'No';
+              const warningText = document.createElement('p');
+              warningText.textContent = "Do you wish to remove this bookmark?"
+              warningText.classList.add('warning-text');
+           
+              deleteModal.appendChild(isOK);
+              deleteModal.appendChild(isNo);
+              deleteModal.appendChild(warningText);
+              li.appendChild(deleteModal)
+              const intervalTimer = setInterval(() => {
+                if (li && deleteModal) {
+                  li.removeChild(deleteModal);
+                if (li.classList.contains('displaced-li')){
+                  li.classList.remove('displaced-li');
+                }
+                 clearInterval(intervalTimer); 
+                }
+              }, 5000 * 2);        
+              isOK.addEventListener('click', ()=>{
+                  chrome.bookmarks.remove(idTobeDeleted, function() {
+                  bookmarksContainer.removeChild(li);
+              });
+              });
+              isNo.addEventListener('click', ()=>{
+              li.classList.remove('displaced-li');
+              li.removeChild(deleteModal);
+              clearInterval(intervalTimer);
+              })
+            
+            })
+           
             if (i === 0){
               const titleBtn = document.createElement('button');
               const title = bookmark.title || '';
@@ -64,7 +136,9 @@
               bookmarksContainer.appendChild(titleBtn)
             }
             bookmarksContainer.appendChild(li);
-          } else {
+          } 
+          
+          else {
             renderBookmarksHeadsandLinks(bookmark.children[i], bgColor); // Recursively call for subdirectories
           }
         }
@@ -129,3 +203,8 @@
       });
     })
   })
+
+
+
+
+   

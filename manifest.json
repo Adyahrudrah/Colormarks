@@ -4,8 +4,7 @@
     "version": "1.0",
     "description": "Manage your bookmarks with this extension.",
     "permissions": [
-      "bookmarks",
-      "tabs"
+      "bookmarks"
     ],
     "action": {
       "default_popup": "popup.html"
