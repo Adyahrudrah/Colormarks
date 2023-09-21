@@ -1,0 +1,28 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #1d1f1f;
+    color: brown;
+    font-size: 1.5rem;
+}
+
+.bookmarks-title-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.bookmarks-title-container button{
+    border: none;
+    outline: transparent;
+    background-color: chocolate;
+}
+
+.bookmarks-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100vw;
+}
