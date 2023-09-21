@@ -8,21 +8,96 @@ body{
     font-size: 1.5rem;
 }
 
+.container{
+
+   padding: 0;
+
+ 
+}
+
 .bookmarks-title-container{
     display: flex;
     flex-wrap: wrap;
-    gap: 5px;
     margin-bottom: 5px;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
 }
 
 .bookmarks-title-container button{
     border: none;
     outline: transparent;
-    background-color: chocolate;
+    color: rgba(255,255,255, 0.6);
+    border-radius: 3px;
+    padding: 5px;
+    font-variant: small-caps;
+    font-size: 1.1rem;
+    margin: 1px;
+    }
+
+.bookmarks-title-container input{
+    padding: 5px;
+    border-radius: 3px;
+    outline: none;
+    border: none;
+    background-color: rgba(255,255,255, 0.5);
+  text-align: center;
+  font-size: 1.1rem;
+  order: 1;
 }
 
+.bookmarks-title-container input::placeholder{
+    color: rgba(0,0,0,0.6);
+    font-weight: bold;
+    font-variant: small-caps;
+}
 .bookmarks-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    width: 100vw;
+    grid-template-columns: repeat(4, 1fr);
+    padding: 50px;
+    gap: 10px;
+}
+
+.bookmarks-container li {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 300px;
+    min-height: 100px;
+    overflow: hidden;
+    padding: 10px;
+    font-variant: small-caps;
+    border-radius: 5px;
+
+}
+
+.bookmarks-container li a{
+    text-decoration: none;
+    color: rgba(255,255,255, 0.4);
+    font-size: 1.3rem;
+    font-weight:500;
+}
+
+.bookmarks-container li a span{
+   font-size: 1.1rem;
+   font-style: italic;
+   font-variant: normal;
+   font-weight: 450;
+}
+
+.bookmarks-container button {
+    grid-column: span 4;
+    display: flex;
+    width: fit-content;
+    border-radius: 3px;
+    padding: 5px;
+    background-color: rgba(255,255,255, 0.5);
+    border: none;
+    outline: transparent;
+    color: rgba(0,0,0, 0.6);
+    border-radius: 3px;
+    padding: 5px;
+    font-variant: small-caps;
+    font-size: 1.1rem;
+    margin: 1px;
+
 }
