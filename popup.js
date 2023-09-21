@@ -4,3 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chrome.runtime.sendMessage({ openNewTab: true });
     });
 });
+
+
+// Query and display favIconUrls of open tabs
+
+  

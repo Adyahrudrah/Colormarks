@@ -22,7 +22,7 @@
               const bookmarkId = event.dataTransfer.getData('text/plain');
               const parentId = bookmark.id;
               chrome.bookmarks.move(bookmarkId, { parentId: parentId }, function () {
-                console.log('Bookmark moved successfully:');
+                alert('Bookmark moved successfully to:', bookmark.title);
             });
           });
 
@@ -82,6 +82,38 @@
             link.addEventListener('dragstart', (event) => {
               event.dataTransfer.setData('text/plain', bookmark.children[i].id);
           });
+            const imgHolder = document.createElement('div');
+            imgHolder.classList.add('img-holder')
+            li.appendChild(imgHolder)
+            const bgImg = localStorage.getItem(link.href)
+            if (bgImg) {
+              imgHolder.style.backgroundImage = `url(${bgImg})`
+            }
+            link.addEventListener('click', function (e) {
+              e.preventDefault();
+              chrome.tabs.create({ url: link.href }, function (newTab) {
+                const tabId = newTab.id;
+                chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+                  if (changeInfo.status === 'complete') {
+                    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                      const activeTab = tabs[0];
+                      if (activeTab && activeTab.id === tabId &&link.href === activeTab.url) {
+                        const faviconUrl = activeTab.favIconUrl ? activeTab.favIconUrl : 'Not available';
+                        imgHolder.style.backgroundImage = `url(${faviconUrl})`;
+            
+                        try {
+                          localStorage.setItem(link.href, faviconUrl);
+                          console.log(faviconUrl);
+                        } catch (error) {
+                          console.error('Error storing favicon URL in local storage:', error);
+                        }
+                      }
+                    });
+                  }
+                });
+              });
+            });
+            
             const deleteBookmarkBtn = document.createElement('button');
             deleteBookmarkBtn.textContent = "x";
             deleteBookmarkBtn.classList.add('del-btn');
@@ -208,3 +240,6 @@
   chrome.bookmarks.getTree(function(bookmarks) {
     renderBookmarks(bookmarks[0].children)
    });
+
+
+   

@@ -21,7 +21,6 @@ body {
 .bookmarks-container::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
-  border-radius: 3px;
 }
 
 #container {
@@ -81,6 +80,7 @@ body {
   position: relative;
   max-height: 60vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .bookmarks-container li {
@@ -193,4 +193,15 @@ body {
   justify-content: center;
   height: fit-content;
   position: absolute;
+}
+
+.bookmarks-container li .img-holder {
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-size: 40px;
+  position: absolute;
+  bottom: -5%;
+  right: -1%;
+  border-radius: 50%;
 }
