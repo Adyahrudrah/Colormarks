@@ -1,7 +1,5 @@
 
-    chrome.bookmarks.getTree(function(bookmarks) {
-     renderBookmarks(bookmarks[0].children)
-    });
+
 
     function renderBookmarks(bookmarks){
       if (bookmarks !== undefined && bookmarks.length > 0){
@@ -207,4 +205,6 @@
 
 
 
-   
+  chrome.bookmarks.getTree(function(bookmarks) {
+    renderBookmarks(bookmarks[0].children)
+   });

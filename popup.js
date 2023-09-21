@@ -1,6 +1,6 @@
-document.addEventListener('DOMContentLoaded', ()=>{
+document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('logBookmarks').addEventListener('click', function () {
-        // Open the new tab with the bookmarks.html page.
-        chrome.tabs.create({ url: chrome.runtime.getURL('bookmarks.html') });
+        // Send a message to the background script to open the new tab
+        chrome.runtime.sendMessage({ openNewTab: true });
     });
-})
+});
