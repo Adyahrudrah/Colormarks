@@ -9,7 +9,8 @@
       "activeTab"
     ],
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+      "default_icon" : {"64" : "brand_icon.png"}
     },
     "background": {
       "service_worker" : "background.js"

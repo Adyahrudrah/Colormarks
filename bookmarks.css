@@ -164,8 +164,7 @@ body {
 }
 
 .bookmarks-container li a:active {
-  height: 35px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: transparent;
 }
 
 .bookmarks-container li a span {
@@ -306,4 +305,9 @@ body {
   border-radius: 5px;
   display: flex;
   align-content: center;
+}
+
+.delete-title-btn {
+  border-radius: 100px;
+  background-color: #e91e63;
 }

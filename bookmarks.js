@@ -16,23 +16,46 @@
             titleBtn.style.backgroundColor = bgColor;
             bookmarksTitleContainer.appendChild(titleBtn);
 
+            titleBtn.draggable= 'True';
+            titleBtn.addEventListener('dragstart', (event) => {
+              event.dataTransfer.setData('text/plain', bookmark.id);
+          });
 
             titleBtn.addEventListener("contextmenu", function(event) {
               event.preventDefault();
-              titleBtn.contentEditable = 'True';
-              titleBtn.focus();
-              const range = document.createRange();
-              range.selectNodeContents(titleBtn);
-              const selection = window.getSelection();
-              selection.removeAllRanges();
-              selection.addRange(range);
+              if (bookmark.children.length !== 0){
+                titleBtn.contentEditable = 'True';
+                titleBtn.focus();
+                const range = document.createRange();
+                range.selectNodeContents(titleBtn);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+              }
+              else{
+                const deleteTitle = document.createElement('button');
+                deleteTitle.classList.add('delete-title-btn')
+                deleteTitle.textContent = 'x'
+                titleBtn.insertAdjacentElement('afterend', deleteTitle);
+                deleteTitle.style.color = 'rgba(0,0,0,.8)'
+                deleteTitle.addEventListener('click', ()=>{
+                  const idTobeDeleted = bookmark.id
+                  chrome.bookmarks.remove(idTobeDeleted, function() {
+                    bookmarksTitleContainer.removeChild(titleBtn);
+                    bookmarksTitleContainer.removeChild(deleteTitle);
+                });
+                });
+              }
+          
             });
             titleBtn.addEventListener("blur", function(event){
               titleBtn.contentEditable = 'False';
               titleBtn.textContent = title;
             });
-
+            let TitleBtnFlow = true;
             titleBtn.addEventListener('keydown', (e)=>{
+              TitleBtnFlow = false;
+              titleBtn.style.minWidth = '100px';
               if (e.key === 'Enter'){
                   const bookmarkId = bookmark.id
                   const newTitle = titleBtn.textContent;
@@ -42,10 +65,12 @@
                     } else {
                       console.log('Bookmark renamed successfully:', result);
                       titleBtn.contentEditable = 'False';
+                      location.reload()
                     }
                   });
                 }
-            })
+              
+            });
 
             titleBtn.addEventListener('dragover', (event) => {
               event.preventDefault();
@@ -53,16 +78,19 @@
 
             titleBtn.addEventListener('drop', (event) => {
               event.preventDefault();
+             
               const bookmarkId = event.dataTransfer.getData('text/plain');
               const parentId = bookmark.id;
-              chrome.bookmarks.move(bookmarkId, { parentId: parentId }, function () {
-                alert(`Bookmark moved successfully to: ${titleBtn.textContent}` );
-            });
+              if (bookmarkId !== parentId) {
+                chrome.bookmarks.move(bookmarkId, { parentId: parentId }, function () {
+              });
+              }
+            
           });
 
             titleBtn.addEventListener('click',   () =>{
-              
-              const bookmarksContainer = document.querySelector('.bookmarks-container');
+              if (TitleBtnFlow){
+                const bookmarksContainer = document.querySelector('.bookmarks-container');
               const getAllLiItems = document.querySelectorAll('.bookmarks-container li');
               const getAllBtnItems = document.querySelectorAll('.bookmarks-container button');
               bookmarksContainer.scrollTo({ top: 0, behavior: "smooth" });
@@ -78,7 +106,9 @@
                 }
               });
                renderBookmarksHeadsandLinks(bookmark, bgColor)
-            })
+          
+              }
+                })
             renderBookmarks(bookmark.children)
           }  
         }
@@ -125,6 +155,10 @@
             link.addEventListener('dragstart', (event) => {
               event.dataTransfer.setData('text/plain', bookmark.children[i].id);
           });
+
+          link.addEventListener('dragend', (event) => {
+              link.parentElement.style.display = 'none';
+        });
           
             const bgImg = localStorage.getItem(link.hostname)
             if (bgImg) {
@@ -210,7 +244,7 @@
             if (i === 0){
               const numOfBookmarks = bookmark.children.length
               const titleBtn = document.createElement('button');
-              const title = bookmark.title + ' | ' + numOfBookmarks || 'root';
+              const title = bookmark.title + ' | ' + numOfBookmarks;
               titleBtn.textContent = title;
               bookmarksContainer.appendChild(titleBtn)
             }
@@ -305,8 +339,7 @@
             newBookmarkBtn.style.color = 'rgba(255,255,255,.8)';
           }, 1500)
           searchBox.value = '';
-          const getTitleBtn = document.querySelector('.rootBar');
-          getTitleBtn.click();
+          location.reload();
         }
       });
 
@@ -315,4 +348,5 @@
 
 document.addEventListener('contextmenu', (e)=>{
   e.preventDefault();
+  
 })
