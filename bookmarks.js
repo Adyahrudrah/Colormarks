@@ -212,7 +212,6 @@
               const titleBtn = document.createElement('button');
               const title = bookmark.title + ' | ' + numOfBookmarks || 'root';
               titleBtn.textContent = title;
-              titleBtn.style.backgroundColor = getRandomAlphaMaterialColor('0.7');
               bookmarksContainer.appendChild(titleBtn)
             }
             bookmarksContainer.appendChild(li);
