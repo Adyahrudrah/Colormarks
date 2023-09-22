@@ -3,7 +3,7 @@
 }
 
 body {
-  background-color: #1d1f1f;
+  background-color: #2b2d42;
   color: brown;
   font-size: 1.5rem;
   user-select: none;
@@ -53,7 +53,7 @@ body {
   transition: opacity 0.3s ease;
 }
 .bookmarks-title-container button:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .bookmarks-title-container input {
@@ -78,7 +78,7 @@ body {
   padding: 50px;
   gap: 10px;
   position: relative;
-  max-height: 60vh;
+  max-height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -95,11 +95,56 @@ body {
   transition: transform 0.3s ease;
 }
 
+.bookmarks-container li::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  transform: translateX(-6%);
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
+.bookmarks-container li:hover:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  position: absolute;
+  transform: translateY(100%);
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
 .bookmarks-container li a {
   text-decoration: none;
   color: rgba(255, 255, 255, 0.5);
   font-size: 1.3rem;
   font-weight: 500;
+  position: relative;
+}
+
+.bookmarks-container li a::before {
+  content: "";
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  position: absolute;
+  width: 0%;
+  height: 2px; /* Match the height of the parent anchor */
+  transition: width 0.3s ease;
+  transform: translate(0, 1300%);
+  display: flex;
+}
+
+.bookmarks-container li a:hover::before {
+  width: 100%;
+  transition: width 0.3s ease;
+  text-decoration: underline;
 }
 
 .bookmarks-container li a:active {
@@ -116,18 +161,23 @@ body {
 }
 
 .bookmarks-container li .del-btn {
-  font-size: 1rem;
-  font-weight: 500;
   color: rgba(255, 255, 255, 0.4);
   background-color: rgba(0, 0, 0, 0.3);
   position: absolute;
-  top: -1px;
-  right: -1px;
+  top: 1px;
+  right: 1px;
   display: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  padding: 12px;
 }
 
 .bookmarks-container li:hover button {
   display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
 }
 
 .bookmarks-container li:has(button:hover) {
@@ -196,12 +246,62 @@ body {
 }
 
 .bookmarks-container li .img-holder {
+  min-width: 50px;
+  max-width: 50px;
+  height: 50px;
+  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.1);
+  background-size: 30px;
+  margin-right: 10px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  padding: 0;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border-bottom: 5px solid rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  offset: 2px;
+  background-position: center;
+  color: rgba(255, 255, 255, 0.6);
+  background-blend-mode: saturation;
+}
+
+.bookmarks-container li:has(.delete-modal) .del-btn {
+  display: none;
+}
+
+.new-bookmark {
+  order: 2;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+#contextMenu {
+  position: absolute;
+  list-style-type: none;
+  padding: 0;
+  display: none;
+  border-radius: 5px;
+  display: flex;
+  align-content: center;
+}
+
+#contextMenu svg {
+  cursor: pointer;
   width: 40px;
   height: 40px;
-  background-repeat: no-repeat;
-  background-size: 40px;
-  position: absolute;
-  bottom: -5%;
-  right: -1%;
+  padding: 5px;
+  left: 50%;
+  transform: translate(-10%, -30%);
+}
+
+#contextMenu button {
+  background-color: whitesmoke;
   border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.6);
+  border: none;
 }

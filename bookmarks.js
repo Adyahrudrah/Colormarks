@@ -4,14 +4,47 @@
     function renderBookmarks(bookmarks){
       if (bookmarks !== undefined && bookmarks.length > 0){
         for (const bookmark of bookmarks){
-          if (bookmark.children && bookmark.children.length > 0){
+          if (bookmark.children && bookmark.children.length >= 0){
             const bookmarksTitleContainer = document.getElementById('bookmarks-title-container');
             const titleBtn = document.createElement('button')
-            const title = bookmark.title || '';
+            const title = bookmark.title || 'root';
             titleBtn.textContent = title;
-            const bgColor = getRandomAlphaMaterialColor('0.4');
+            if (titleBtn.textContent === 'root'){
+              titleBtn.classList.add('rootBar')
+            }
+            const bgColor = getRandomAlphaMaterialColor('.6');
             titleBtn.style.backgroundColor = bgColor;
-            bookmarksTitleContainer.appendChild(titleBtn)
+            bookmarksTitleContainer.appendChild(titleBtn);
+
+
+            titleBtn.addEventListener("contextmenu", function(event) {
+              event.preventDefault();
+              titleBtn.contentEditable = 'True';
+              titleBtn.focus();
+              const range = document.createRange();
+              range.selectNodeContents(titleBtn);
+              const selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
+            });
+            titleBtn.addEventListener("blur", function(event){
+              titleBtn.contentEditable = 'False';
+            });
+
+            titleBtn.addEventListener('keydown', (e)=>{
+              if (e.key === 'Enter'){
+                  const bookmarkId = bookmark.id
+                  const newTitle = titleBtn.textContent;
+                  chrome.bookmarks.update(bookmarkId, { title: newTitle }, function(result) {
+                    if (chrome.runtime.lastError) {
+                      console.error(chrome.runtime.lastError);
+                    } else {
+                      console.log('Bookmark renamed successfully:', result);
+                      titleBtn.contentEditable = 'False';
+                    }
+                  });
+                }
+            })
 
             titleBtn.addEventListener('dragover', (event) => {
               event.preventDefault();
@@ -22,7 +55,7 @@
               const bookmarkId = event.dataTransfer.getData('text/plain');
               const parentId = bookmark.id;
               chrome.bookmarks.move(bookmarkId, { parentId: parentId }, function () {
-                alert('Bookmark moved successfully to:', bookmark.title);
+                alert(`Bookmark moved successfully to: ${titleBtn.textContent}` );
             });
           });
 
@@ -75,19 +108,27 @@
             }
             
             link.target = "_blank";
+            let testConsole = link.textContent
+            testConsole = testConsole.toLowerCase();
+            
+        
            
-         
+            const imgHolder = document.createElement('div');
+            imgHolder.classList.add('img-holder')
+            li.appendChild(imgHolder)
+
             li.appendChild(link);
             link.draggable= 'True';
             link.addEventListener('dragstart', (event) => {
               event.dataTransfer.setData('text/plain', bookmark.children[i].id);
           });
-            const imgHolder = document.createElement('div');
-            imgHolder.classList.add('img-holder')
-            li.appendChild(imgHolder)
-            const bgImg = localStorage.getItem(link.href)
+          
+            const bgImg = localStorage.getItem(link.hostname)
             if (bgImg) {
               imgHolder.style.backgroundImage = `url(${bgImg})`
+            }
+            else{
+              imgHolder.textContent = title_raw[0]
             }
             link.addEventListener('click', function (e) {
               e.preventDefault();
@@ -95,18 +136,21 @@
                 const tabId = newTab.id;
                 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
                   if (changeInfo.status === 'complete') {
-                    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                    chrome.tabs.query({ active: true}, function (tabs) {
                       const activeTab = tabs[0];
                       if (activeTab && activeTab.id === tabId &&link.href === activeTab.url) {
                         const faviconUrl = activeTab.favIconUrl ? activeTab.favIconUrl : 'Not available';
                         imgHolder.style.backgroundImage = `url(${faviconUrl})`;
-            
+                        imgHolder.style.color = 'transparent';
                         try {
-                          localStorage.setItem(link.href, faviconUrl);
-                          console.log(faviconUrl);
+                          console.log(link.hostname)
+                          localStorage.setItem(link.hostname, faviconUrl);
                         } catch (error) {
                           console.error('Error storing favicon URL in local storage:', error);
                         }
+                      }
+                      else{
+                        imgHolder.textContent = title_raw[0]
                       }
                     });
                   }
@@ -119,6 +163,7 @@
             deleteBookmarkBtn.classList.add('del-btn');
             li.appendChild(deleteBookmarkBtn);
             deleteBookmarkBtn.addEventListener('click', ()=>{
+              bookmarksContainer.scrollTo({ top: 0, behavior: "smooth" });
               const idTobeDeleted = bookmark.children[i].id
               li.classList.add('displaced-li');
               const deleteModal = document.createElement('div');
@@ -160,9 +205,11 @@
             })
            
             if (i === 0){
+              const numOfBookmarks = bookmark.children.length
               const titleBtn = document.createElement('button');
-              const title = bookmark.title || '';
+              const title = bookmark.title + ' | ' + numOfBookmarks || 'root';
               titleBtn.textContent = title;
+              titleBtn.style.backgroundColor = getRandomAlphaMaterialColor('0.7');
               bookmarksContainer.appendChild(titleBtn)
             }
             bookmarksContainer.appendChild(li);
@@ -204,42 +251,63 @@
 
 
   const searchBox = document.getElementById('search-box');
-  searchBox.addEventListener('input', ()=>{
- 
-    const searchText = searchBox.value
-    
-    const getAllTitleBtns = document.querySelectorAll('.bookmarks-title-container button')
-    getAllTitleBtns.forEach((btns) =>{
-       if (btns.textContent === 'Favorites bar')
-       {
-        btns.click();
-       }
-      const getAllLiItems = document.querySelectorAll('.bookmarks-container li');
-      const getAllBtnItems = document.querySelectorAll('.bookmarks-container button'); 
-      getAllBtnItems.forEach((btns) =>{
-        btns.style.display = 'none'
-      })
-      getAllLiItems.forEach((li) =>{
-        const liText = (li.textContent).toLowerCase();
-        if (liText.includes(searchText.toLowerCase())){
-          li.style.display = "flex";
-          if (li.previousElementSibling.tagName === 'BUTTON'){
-            li.previousElementSibling.style.display = "flex";
-          }
-        }
-        else{
-          li.style.display = "none";
-        }
-      });
-    })
-  })
 
+  searchBox.addEventListener('input', ()=>{
+
+    const getTitleBtn = document.querySelector('.rootBar');
+    getTitleBtn.click();
+    const getAllLinkItems = document.querySelectorAll('.bookmarks-container li a');
+    const searchText = (searchBox.value).toLowerCase();
+
+    getAllLinkItems.forEach((a) =>{
+      const liText = (a.textContent).toLowerCase();
+
+      if (liText.includes(searchText)){
+        a.parentElement.style.display = "flex";
+      }
+      else{
+        a.parentElement.style.display = "none";
+  
+      }
+    });
+  })
+  
 
 
 
   chrome.bookmarks.getTree(function(bookmarks) {
-    renderBookmarks(bookmarks[0].children)
+    renderBookmarks(bookmarks)
    });
 
 
-   
+   const newBookmarkBtn = document.getElementById('new-bookmark');
+   newBookmarkBtn.addEventListener('click', ()=> {
+    const newItemTitle = searchBox.value;
+    if (newItemTitle !== ''){
+      
+     let newBookmark = {
+        parentId:  '1', 
+        title: newItemTitle,
+      };
+
+      chrome.bookmarks.create(newBookmark, function() {
+        if (chrome.runtime.lastError) {
+          console.error(chrome.runtime.lastError);
+        } else {
+          newBookmarkBtn.textContent = 'Success';
+          newBookmarkBtn.style.backgroundColor = 'rgb(67, 160, 71)'
+          newBookmarkBtn.style.color = 'rgba(0,0,0,.8)';
+          setTimeout(() => {
+            newBookmarkBtn.textContent = '+';
+            newBookmarkBtn.style.backgroundColor = 'rgba(0, 0, 0, 0.3)'
+            newBookmarkBtn.style.color = 'rgba(255,255,255,.8)';
+          }, 1500)
+          searchBox.value = '';
+          const getTitleBtn = document.querySelector('.rootBar');
+          getTitleBtn.click();
+        }
+      });
+
+    }
+   })
+
