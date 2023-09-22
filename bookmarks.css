@@ -189,6 +189,10 @@ body {
   padding: 12px;
 }
 
+.bookmarks-container li .del-btn:hover {
+  background-color: #e91e63;
+}
+
 .bookmarks-container li:hover button {
   display: flex;
   justify-content: center;

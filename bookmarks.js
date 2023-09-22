@@ -61,9 +61,11 @@
           });
 
             titleBtn.addEventListener('click',   () =>{
+              
               const bookmarksContainer = document.querySelector('.bookmarks-container');
               const getAllLiItems = document.querySelectorAll('.bookmarks-container li');
               const getAllBtnItems = document.querySelectorAll('.bookmarks-container button');
+              bookmarksContainer.scrollTo({ top: 0, behavior: "smooth" });
               getAllLiItems.forEach((li) => {
                 if (bookmarksContainer.contains(li)) {
                   bookmarksContainer.removeChild(li);
