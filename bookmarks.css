@@ -47,6 +47,9 @@ body {
   margin: 1px;
   transition: opacity 0.3s ease;
 }
+.bookmarks-title-container button::selection {
+  background-color: #2b2d42;
+}
 
 .bookmarks-title-container:has(button:hover) :not(button:hover, input) {
   opacity: 0.5;
@@ -129,9 +132,22 @@ body {
   content: "";
   background-image: linear-gradient(
     to right,
-    transparent,
-    rgba(255, 255, 255, 0.5),
-    transparent
+    #f44336,
+    #e91e63,
+    #9c27b0,
+    #673ab7,
+    #3f51b5,
+    #2196f3,
+    #03a9f4,
+    #00bcd4,
+    #009688,
+    #4caf50,
+    #8bc34a,
+    #cddc39,
+    #ffc107,
+    #ff9800,
+    #ff5722,
+    #795548
   );
   position: absolute;
   width: 0%;
@@ -286,22 +302,4 @@ body {
   border-radius: 5px;
   display: flex;
   align-content: center;
-}
-
-#contextMenu svg {
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  padding: 5px;
-  left: 50%;
-  transform: translate(-10%, -30%);
-}
-
-#contextMenu button {
-  background-color: whitesmoke;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  box-shadow: 0 0 5px 0px rgba(0, 0, 0, 0.6);
-  border: none;
 }
