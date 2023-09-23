@@ -1,7 +1,7 @@
 
 
 
-    function renderBookmarks(bookmarks){
+    function renderBookmarks(bookmarks, bgColor){
       if (bookmarks !== undefined && bookmarks.length > 0){
         for (const bookmark of bookmarks){
           if (bookmark.children && bookmark.children.length >= 0){
@@ -12,7 +12,18 @@
             if (titleBtn.textContent === 'root'){
               titleBtn.classList.add('rootBar')
             }
-            const bgColor = getRandomAlphaMaterialColor('.6');
+
+            bookmark.parentId === '0' ? titleBtn.style.order = 1 : 0
+            if (bookmark.parentId === '1' || bookmark.parentId === '0') {
+              // titleBtn.style.backgroundColor = getRandomAlphaMaterialColor('0.7')
+              const dividerLine = document.createElement('div')
+              dividerLine.innerHTML = `<svg height="210" width="500">
+              <line x1="0" y1="0" x2="350" y2="0" style="stroke:rgba(255,255,255,0.5);stroke-width:0.5" />
+            </svg>`
+              dividerLine.classList.add('divider-line')
+              bookmarksTitleContainer.insertAdjacentElement('beforeend', dividerLine)
+            }
+            
             titleBtn.style.backgroundColor = bgColor;
             bookmarksTitleContainer.appendChild(titleBtn);
 
@@ -89,8 +100,9 @@
           });
 
             titleBtn.addEventListener('click',   () =>{
-              if (TitleBtnFlow){
-                const bookmarksContainer = document.querySelector('.bookmarks-container');
+              if (TitleBtnFlow)
+              {
+              const bookmarksContainer = document.querySelector('.bookmarks-container');
               const getAllLiItems = document.querySelectorAll('.bookmarks-container li');
               const getAllBtnItems = document.querySelectorAll('.bookmarks-container button');
               bookmarksContainer.scrollTo({ top: 0, behavior: "smooth" });
@@ -109,7 +121,15 @@
           
               }
                 })
-            renderBookmarks(bookmark.children)
+            let bgColorNew = getRandomAlphaMaterialColor('.6');
+            if (bgColorNew !== bgColor) {
+              renderBookmarks(bookmark.children, bgColorNew)
+            }
+            else{
+              bgColorNew = getRandomAlphaMaterialColor('.6');
+              renderBookmarks(bookmark.children, bgColorNew)
+            }
+           
           }  
         }
       }
@@ -157,7 +177,9 @@
           });
 
           link.addEventListener('dragend', (event) => {
+            if (event.dataTransfer.dropEffect !== "none") {
               link.parentElement.style.display = 'none';
+          }
         });
           
             const bgImg = localStorage.getItem(link.hostname)
@@ -167,6 +189,8 @@
             else{
               imgHolder.textContent = title_raw[0]
             }
+        
+
             link.addEventListener('click', function (e) {
               e.preventDefault();
               chrome.tabs.create({ url: link.href }, function (newTab) {
@@ -180,7 +204,6 @@
                         imgHolder.style.backgroundImage = `url(${faviconUrl})`;
                         imgHolder.style.color = 'transparent';
                         try {
-                          console.log(link.hostname)
                           localStorage.setItem(link.hostname, faviconUrl);
                         } catch (error) {
                           console.error('Error storing favicon URL in local storage:', error);
@@ -215,9 +238,10 @@
               warningText.textContent = "Do you wish to remove this bookmark?"
               warningText.classList.add('warning-text');
            
+              
+              deleteModal.appendChild(warningText);
               deleteModal.appendChild(isOK);
               deleteModal.appendChild(isNo);
-              deleteModal.appendChild(warningText);
               li.appendChild(deleteModal)
               const intervalTimer = setInterval(() => {
                 if (li && deleteModal) {
@@ -244,6 +268,7 @@
             if (i === 0){
               const numOfBookmarks = bookmark.children.length
               const titleBtn = document.createElement('button');
+              titleBtn.classList.add('dirBtn')
               const title = bookmark.title + ' | ' + numOfBookmarks;
               titleBtn.textContent = title;
               bookmarksContainer.appendChild(titleBtn)
@@ -258,25 +283,16 @@
       }
     }
 
-    const materialColors = [
-      '#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', // Primary Colors
-      '#2196F3', '#03A9F4', '#00BCD4', '#009688', '#4CAF50', // Primary Colors
-      '#8BC34A', '#CDDC39',  '#FF9800', '#FF5722', // Primary Colors
-      '#795548', '#9E9E9E', '#607D8B' // Grey Colors
-  ];
+    const materialColors = ['#9c27b0','#673ab7','#3f51b5','#009688','#795548', '#335c67', '#bc4749', '#495057'];
 
 
     function getRandomAlphaMaterialColor(alpha) {
       const randomIndex = Math.floor(Math.random() * materialColors.length);
       const color = materialColors[randomIndex];
-      
-      // Convert the hexadecimal color to rgba format with the specified alpha value
       const rgbaColor = hexToRgba(color, alpha);
-      
       return rgbaColor;
   }
   
-  // Function to convert hexadecimal color to rgba format
   function hexToRgba(hex, alpha) {
       hex = hex.replace(/^#/, '');
       const r = parseInt(hex.substring(0, 2), 16);
@@ -289,7 +305,6 @@
   const searchBox = document.getElementById('search-box');
 
   searchBox.addEventListener('input', ()=>{
-
     const getTitleBtn = document.querySelector('.rootBar');
     getTitleBtn.click();
     const getAllLinkItems = document.querySelectorAll('.bookmarks-container li a');
@@ -306,13 +321,21 @@
   
       }
     });
-  })
+  
+
+  });
   
 
 
 
   chrome.bookmarks.getTree(function(bookmarks) {
-    renderBookmarks(bookmarks)
+    const bgColor = '#1d1f1f';
+    renderBookmarks(bookmarks, bgColor)
+   });
+
+
+   chrome.bookmarks.getTree(function(bookmarks) {
+    renderSearch(bookmarks)
    });
 
 
@@ -350,3 +373,10 @@ document.addEventListener('contextmenu', (e)=>{
   e.preventDefault();
   
 })
+
+
+function  renderSearch(bookmarks){
+  for (const bookmark of bookmarks) {
+    console.log(bookmark)
+  }
+}
