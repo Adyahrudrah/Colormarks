@@ -234,7 +234,7 @@ body {
   border: none;
   outline: transparent;
   color: rgba(0, 0, 0, 0.6);
-  border-radius: 8px;
+  border-radius: 5px;
   padding: 5px;
   font-variant: small-caps;
   font-size: 1.1rem;
@@ -350,7 +350,7 @@ body {
 
 .search-box {
   padding: 5px;
-  border-radius: 8px;
+  border-radius: 5px;
   outline: none;
   border: none;
   background-color: rgba(255, 255, 255, 0.5);
@@ -369,8 +369,8 @@ body {
   background-color: rgba(255, 255, 255, 0);
   display: grid;
   max-height: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   text-align: center;
   border-radius: 5px;
 }

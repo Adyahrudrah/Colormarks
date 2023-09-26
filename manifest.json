@@ -7,7 +7,8 @@
       "bookmarks",
       "tabs",
       "activeTab",
-      "storage"
+      "storage",
+      "history"
     ],
     "web_accessible_resources": [
       {

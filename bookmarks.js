@@ -3,7 +3,7 @@ let MOST_VISITED_COUNT = JSON.parse(localStorage.getItem("mostVisitedCounter"));
 if (!MOST_VISITED_COUNT || MOST_VISITED_COUNT.length < 0) {
   MOST_VISITED_COUNT = [];
 }
-
+let prevBtnColor;
 function renderBookmarks(bookmarks, bgColor) {
   if (bookmarks !== undefined && bookmarks.length > 0) {
     for (const bookmark of bookmarks) {
@@ -17,24 +17,36 @@ function renderBookmarks(bookmarks, bgColor) {
         if (titleBtn.textContent === "root") {
           titleBtn.classList.add("rootBar");
         }
-
-        bookmark.parentId === "0" ? (titleBtn.style.order = 1) : 0;
-        if (bookmark.parentId === "1" || bookmark.parentId === "0") {
-          // titleBtn.style.backgroundColor = getRandomAlphaMaterialColor('0.7')
-          const dividerLine = document.createElement("div");
-          dividerLine.innerHTML = `<svg height="210" width="500">
-              <line x1="0" y1="0" x2="350" y2="0" style="stroke:rgba(255,255,255,0.5);stroke-width:0.5" />
-            </svg>`;
-          dividerLine.classList.add("divider-line");
-          bookmarksTitleContainer.insertAdjacentElement(
-            "beforeend",
-            dividerLine
-          );
+        if (bookmark.parentId === "0") {
+          titleBtn.style.order = 1
+          createDividerLine();
         }
+   
+      function createDividerLine()
+      {
+        const dividerLine = document.createElement("div");
+        dividerLine.innerHTML = `<svg height="210" width="500">
+            <line x1="0" y1="0" x2="350" y2="0" style="stroke:rgba(255,255,255,0.5);stroke-width:0.5" />
+          </svg>`;
+        dividerLine.classList.add("divider-line");
+        bookmarksTitleContainer.insertAdjacentElement(
+          "beforeend",
+          dividerLine
+        );
+      }
+       let titleBtnBgColor
+       if (bookmark.parentId === '1' ) {
+        createDividerLine();
+      
+        do {
+          titleBtnBgColor = getRandomAlphaMaterialColor('0.5');
+        } while (titleBtnBgColor === prevBtnColor);
+       }
 
-        titleBtn.style.backgroundColor = bgColor;
-        // titleBtn.style.color = (bgColor.toString()).replace('.3', '0.9');
-    
+       if (titleBtnBgColor !== undefined){
+       prevBtnColor = titleBtnBgColor
+       }
+       titleBtn.style.backgroundColor = prevBtnColor;
         bookmarksTitleContainer.appendChild(titleBtn);
 
         titleBtn.draggable = "True";
@@ -44,6 +56,7 @@ function renderBookmarks(bookmarks, bgColor) {
 
         titleBtn.addEventListener("contextmenu", function (event) {
           event.preventDefault();
+
           if (bookmark.children.length !== 0) {
             titleBtn.contentEditable = "True";
             titleBtn.focus();
@@ -155,15 +168,16 @@ function renderBookmarksHeadsandLinks(bookmark) {
           titleBtn.textContent = title;
           bookmarksContainer.appendChild(titleBtn);
         }
-        createElements(bookmark.children[i]);
+        createElements(bookmark.children[i], removeBtns = false);
       } else {
         renderBookmarksHeadsandLinks(bookmark.children[i]); // Recursively call for subdirectories
       }
     }
   }
+ 
 }
 
-function createElements(bookmarkChildren) {
+function createElements(bookmarkChildren, removeBtns = false) {
   const li = document.createElement("li");
   const link = document.createElement("a");
   const title_raw = bookmarkChildren.title || "";
@@ -300,7 +314,8 @@ function createElements(bookmarkChildren) {
     });
   });
 
-  const deleteBookmarkBtn = document.createElement("button");
+  if (!removeBtns){
+    const deleteBookmarkBtn = document.createElement("button");
   deleteBookmarkBtn.textContent = "x";
   deleteBookmarkBtn.classList.add("del-btn");
   li.appendChild(deleteBookmarkBtn);
@@ -343,6 +358,8 @@ function createElements(bookmarkChildren) {
       clearInterval(intervalTimer);
     });
   });
+  }
+  
 
   bookmarksContainer.appendChild(li);
 }
@@ -414,7 +431,7 @@ const mostVisited = document.getElementById("most-visited");
 mostVisited.addEventListener("click", () => {
   clearExistingContents();
   let isClearHistoryBtnAdded = false;
-  if (MOST_VISITED_COUNT.length > 3){
+  if (MOST_VISITED_COUNT.length > 0){
     for (const countDetails of MOST_VISITED_COUNT) {
       if (countDetails.bookmark) {
         if (countDetails.counter > 2) {
@@ -436,7 +453,7 @@ mostVisited.addEventListener("click", () => {
           createElements(
             countDetails.bookmark,
             getRandomAlphaMaterialColor("0.5")
-          );
+          , removeBtns = false);
         }
    
    
@@ -483,15 +500,14 @@ searchBox.addEventListener("input", () => {
     const searchText = (searchBox.value).toLowerCase();// Replace with the text you want to search for
   const regex = new RegExp(searchText, 'i'); // 'i' flag for case-insensitive search
   const matchingTitleEntries = bookmarksIndex.filter((bookmarkDetails) => {
-    return regex.test(bookmarkDetails.title) || regex.test(bookmarkDetails.url);
+    return regex.test(bookmarkDetails.title && bookmarkDetails.title !== '') || regex.test(bookmarkDetails.url);
   });
   
   
-  // const matchingURLEntries = bookmarksIndex.filter((bookmarkDetails) => regex.test(bookmarkDetails.url))
   clearExistingContents();
  for (const bookmark of matchingTitleEntries){
   const bgColor =  getRandomAlphaMaterialColor('0.5')
-  createElements(bookmark, bgColor)
+  createElements(bookmark, bgColor, removeBtns = false)
     }
 
  
@@ -508,10 +524,17 @@ chrome.bookmarks.getTree(function (bookmarks) {
   renderBookmarks(bookmarks, bgColor);
 });
 
-chrome.bookmarks.getTree(function (bookmarks) {
-  renderSearch(bookmarks);
+
+
+console.log(chrome); // Log the chrome object to the console
+chrome.history.search({ text: "", maxResults: 50 }, (historyItems) => {
+  console.log(historyItems)
+  const recentHistory = document.createElement('button')
+  recentHistory.textContent = 'History | (Read-Only)'
+  bookmarksContainer.appendChild(recentHistory)
+  const sortedHistoryItems = historyItems.sort((a, b) => b.visitCount - a.visitCount)
+  for (const history of sortedHistoryItems){
+    console.log(history) 
+  createElements(history, removeBtns = true)
+  }
 });
-
-
-
- 
