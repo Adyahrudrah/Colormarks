@@ -6,7 +6,15 @@
     "permissions": [
       "bookmarks",
       "tabs",
-      "activeTab"
+      "activeTab",
+      "storage"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["_favicon/*"],
+        "matches": ["<all_urls>"],
+        "extension_ids": ["*"]
+      }
     ],
     "action": {
       "default_popup": "popup.html",
@@ -18,8 +26,11 @@
     "content_scripts": [
       {
         "matches": ["<all_urls>"],
-        "js": [ "bookmarks.js"]
+        "js": [ "popup.js"]
       }
-    ]
+    ],
+    "chrome_url_overrides": {
+      "newtab": "bookmarks.html"
+    }
   }
   
