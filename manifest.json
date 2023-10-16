@@ -29,9 +29,6 @@
         "matches": ["<all_urls>"],
         "js": [ "popup.js"]
       }
-    ],
-    "chrome_url_overrides": {
-      "newtab": "bookmarks.html"
-    }
+    ]
   }
   
