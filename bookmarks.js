@@ -18,35 +18,34 @@ function renderBookmarks(bookmarks, bgColor) {
           titleBtn.classList.add("rootBar");
         }
         if (bookmark.parentId === "0") {
-          titleBtn.style.order = 1
+          titleBtn.style.order = 1;
           createDividerLine();
         }
-   
-      function createDividerLine()
-      {
-        const dividerLine = document.createElement("div");
-        dividerLine.innerHTML = `<svg height="210" width="500">
+
+        function createDividerLine() {
+          const dividerLine = document.createElement("div");
+          dividerLine.innerHTML = `<svg height="210" width="500">
             <line x1="0" y1="0" x2="350" y2="0" style="stroke:rgba(255,255,255,0.5);stroke-width:0.5" />
           </svg>`;
-        dividerLine.classList.add("divider-line");
-        bookmarksTitleContainer.insertAdjacentElement(
-          "beforeend",
-          dividerLine
-        );
-      }
-       let titleBtnBgColor
-       if (bookmark.parentId === '1' ) {
-        createDividerLine();
-      
-        do {
-          titleBtnBgColor = getRandomAlphaMaterialColor('0.5');
-        } while (titleBtnBgColor === prevBtnColor);
-       }
+          dividerLine.classList.add("divider-line");
+          bookmarksTitleContainer.insertAdjacentElement(
+            "beforeend",
+            dividerLine
+          );
+        }
+        let titleBtnBgColor;
+        if (bookmark.parentId === "1") {
+          createDividerLine();
 
-       if (titleBtnBgColor !== undefined){
-       prevBtnColor = titleBtnBgColor
-       }
-       titleBtn.style.backgroundColor = prevBtnColor;
+          do {
+            titleBtnBgColor = getRandomAlphaMaterialColor("0.5");
+          } while (titleBtnBgColor === prevBtnColor);
+        }
+
+        if (titleBtnBgColor !== undefined) {
+          prevBtnColor = titleBtnBgColor;
+        }
+        titleBtn.style.backgroundColor = prevBtnColor;
         bookmarksTitleContainer.appendChild(titleBtn);
 
         titleBtn.draggable = "True";
@@ -70,7 +69,7 @@ function renderBookmarks(bookmarks, bgColor) {
             deleteTitle.classList.add("delete-title-btn");
             deleteTitle.textContent = "x";
             titleBtn.insertAdjacentElement("afterend", deleteTitle);
-            deleteTitle.style.backgroundColor = "tomato"
+            deleteTitle.style.backgroundColor = "tomato";
 
             deleteTitle.addEventListener("click", () => {
               const idTobeDeleted = bookmark.id;
@@ -81,9 +80,6 @@ function renderBookmarks(bookmarks, bgColor) {
             });
           }
         });
-        
-        
-        
 
         titleBtn.addEventListener("blur", function (event) {
           titleBtn.contentEditable = "False";
@@ -168,13 +164,12 @@ function renderBookmarksHeadsandLinks(bookmark) {
           titleBtn.textContent = title;
           bookmarksContainer.appendChild(titleBtn);
         }
-        createElements(bookmark.children[i], removeBtns = false);
+        createElements(bookmark.children[i], (removeBtns = false));
       } else {
         renderBookmarksHeadsandLinks(bookmark.children[i]); // Recursively call for subdirectories
       }
     }
   }
- 
 }
 
 function createElements(bookmarkChildren, removeBtns = false) {
@@ -220,8 +215,9 @@ function createElements(bookmarkChildren, removeBtns = false) {
   if (bgImg) {
     imgHolder.style.backgroundImage = `url(${bgImg})`;
   } else {
-    typeof(title_raw[0]) === 'string' ? imgHolder.textContent = (title_raw[0]).toUpperCase() : title_raw[0];
-    
+    typeof title_raw[0] === "string"
+      ? (imgHolder.textContent = title_raw[0].toUpperCase())
+      : title_raw[0];
   }
   let toggleBgImg = false;
   imgHolder.addEventListener("click", () => {
@@ -231,14 +227,13 @@ function createElements(bookmarkChildren, removeBtns = false) {
       imgHolder.style.backgroundImage = `url(${bgImg})`;
       imgHolder.textContent = "";
     } else {
-      typeof(title_raw[0]) === 'string' ? imgHolder.textContent = (title_raw[0]).toUpperCase() : title_raw[0];
+      typeof title_raw[0] === "string"
+        ? (imgHolder.textContent = title_raw[0].toUpperCase())
+        : title_raw[0];
       imgHolder.style.backgroundImage = "none";
-      localStorage.removeItem(link.hostname)
+      localStorage.removeItem(link.hostname);
     }
   });
-
-
-  
 
   let counter = 1;
   link.addEventListener("click", function (e) {
@@ -261,7 +256,6 @@ function createElements(bookmarkChildren, removeBtns = false) {
         "mostVisitedCounter",
         JSON.stringify(MOST_VISITED_COUNT)
       );
-
     } else {
       MOST_VISITED_COUNT.push({
         site: link.href,
@@ -272,7 +266,6 @@ function createElements(bookmarkChildren, removeBtns = false) {
         "mostVisitedCounter",
         JSON.stringify(MOST_VISITED_COUNT)
       );
-  
     }
     e.preventDefault();
 
@@ -281,7 +274,6 @@ function createElements(bookmarkChildren, removeBtns = false) {
       if (bgImg) {
         return;
       } else {
-
         chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
           if (changeInfo.status === "complete") {
             chrome.tabs.query({ active: true }, function (tabs) {
@@ -305,7 +297,9 @@ function createElements(bookmarkChildren, removeBtns = false) {
                   );
                 }
               } else {
-                typeof(title_raw[0]) === 'string' ? imgHolder.textContent = (title_raw[0]).toUpperCase() : title_raw[0];
+                typeof title_raw[0] === "string"
+                  ? (imgHolder.textContent = title_raw[0].toUpperCase())
+                  : title_raw[0];
               }
             });
           }
@@ -314,58 +308,69 @@ function createElements(bookmarkChildren, removeBtns = false) {
     });
   });
 
-  if (!removeBtns){
+  if (!removeBtns) {
     const deleteBookmarkBtn = document.createElement("button");
-  deleteBookmarkBtn.textContent = "x";
-  deleteBookmarkBtn.classList.add("del-btn");
-  li.appendChild(deleteBookmarkBtn);
-  deleteBookmarkBtn.addEventListener("click", () => {
-    const idTobeDeleted = bookmarkChildren.id;
-    li.classList.add("displaced-li");
-    const deleteModal = document.createElement("div");
-    deleteModal.classList.add("delete-modal");
-    const isOK = document.createElement("button");
-    isOK.classList.add("ok");
-    isOK.textContent = "Yes";
-    const isNo = document.createElement("button");
-    isNo.classList.add("No");
-    isNo.textContent = "No";
-    const warningText = document.createElement("p");
-    warningText.textContent = "Do you wish to remove this bookmark?";
-    warningText.classList.add("warning-text");
+    deleteBookmarkBtn.textContent = "x";
+    deleteBookmarkBtn.classList.add("del-btn");
+    li.appendChild(deleteBookmarkBtn);
+    deleteBookmarkBtn.addEventListener("click", () => {
+      const idTobeDeleted = bookmarkChildren.id;
+      li.classList.add("displaced-li");
+      const deleteModal = document.createElement("div");
+      deleteModal.classList.add("delete-modal");
+      const isOK = document.createElement("button");
+      isOK.classList.add("ok");
+      isOK.textContent = "Yes";
+      const isNo = document.createElement("button");
+      isNo.classList.add("No");
+      isNo.textContent = "No";
+      const warningText = document.createElement("p");
+      warningText.textContent = "Do you wish to remove this bookmark?";
+      warningText.classList.add("warning-text");
 
-    deleteModal.appendChild(warningText);
-    deleteModal.appendChild(isOK);
-    deleteModal.appendChild(isNo);
-    li.appendChild(deleteModal);
-    const intervalTimer = setInterval(() => {
-      if (li && deleteModal) {
-        li.removeChild(deleteModal);
-        if (li.classList.contains("displaced-li")) {
-          li.classList.remove("displaced-li");
+      deleteModal.appendChild(warningText);
+      deleteModal.appendChild(isOK);
+      deleteModal.appendChild(isNo);
+      li.appendChild(deleteModal);
+      const intervalTimer = setInterval(() => {
+        if (li && deleteModal) {
+          li.removeChild(deleteModal);
+          if (li.classList.contains("displaced-li")) {
+            li.classList.remove("displaced-li");
+          }
+          clearInterval(intervalTimer);
         }
+      }, 5000 * 2);
+      isOK.addEventListener("click", () => {
+        chrome.bookmarks.remove(idTobeDeleted, function () {
+          bookmarksContainer.removeChild(li);
+        });
+      });
+      isNo.addEventListener("click", () => {
+        li.classList.remove("displaced-li");
+        li.removeChild(deleteModal);
         clearInterval(intervalTimer);
-      }
-    }, 5000 * 2);
-    isOK.addEventListener("click", () => {
-      chrome.bookmarks.remove(idTobeDeleted, function () {
-        bookmarksContainer.removeChild(li);
       });
     });
-    isNo.addEventListener("click", () => {
-      li.classList.remove("displaced-li");
-      li.removeChild(deleteModal);
-      clearInterval(intervalTimer);
-    });
-  });
   }
-  
 
   bookmarksContainer.appendChild(li);
 }
 
 const materialColors = [
-  '#f44336','#e91e63','#2196f3','#03a9f4','#00bcd4','#009688','#4caf50','#8bc34a','#cddc39','#ffc107','#ff9800','#ff5722','#FF6969'
+  "#f44336",
+  "#e91e63",
+  "#2196f3",
+  "#03a9f4",
+  "#00bcd4",
+  "#009688",
+  "#4caf50",
+  "#8bc34a",
+  "#cddc39",
+  "#ffc107",
+  "#ff9800",
+  "#ff5722",
+  "#FF6969",
 ];
 
 function getRandomAlphaMaterialColor(alpha) {
@@ -382,10 +387,6 @@ function hexToRgba(hex, alpha) {
   const b = parseInt(hex.substring(4, 6), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
-
-
-
-
 
 const newBookmarkBtn = document.getElementById("new-bookmark");
 newBookmarkBtn.addEventListener("click", () => {
@@ -412,26 +413,23 @@ newBookmarkBtn.addEventListener("click", () => {
         location.reload();
       }
     });
-  }
-  else{
-    searchBox.placeholder = 'Create a folder..'
-    setTimeout(() =>{
-      searchBox.placeholder = "search | new_folder"
-    }, 2000)
+  } else {
+    searchBox.placeholder = "Create a folder..";
+    setTimeout(() => {
+      searchBox.placeholder = "search | new_folder";
+    }, 2000);
   }
 });
 
-document.addEventListener("contextmenu", (e) => {
-  e.preventDefault();
-});
-
-
+// document.addEventListener("contextmenu", (e) => {
+//   e.preventDefault();
+// });
 
 const mostVisited = document.getElementById("most-visited");
 mostVisited.addEventListener("click", () => {
   clearExistingContents();
   let isClearHistoryBtnAdded = false;
-  if (MOST_VISITED_COUNT.length > 0){
+  if (MOST_VISITED_COUNT.length > 0) {
     for (const countDetails of MOST_VISITED_COUNT) {
       if (countDetails.bookmark) {
         if (countDetails.counter > 2) {
@@ -452,89 +450,77 @@ mostVisited.addEventListener("click", () => {
           }
           createElements(
             countDetails.bookmark,
-            getRandomAlphaMaterialColor("0.5")
-          , removeBtns = false);
+            getRandomAlphaMaterialColor("0.5"),
+            (removeBtns = false)
+          );
         }
-   
-   
       }
-    
     }
-  }
-  else{
+  } else {
     createZeroDiv("You are not visiting anything often!");
   }
 });
 
-function createZeroDiv(comment){
+function createZeroDiv(comment) {
   const bookmarksContainer = document.querySelector(".bookmarks-container");
-  const emptyDiv = document.createElement('div');
-  emptyDiv.classList.add('empty-div')
+  const emptyDiv = document.createElement("div");
+  emptyDiv.classList.add("empty-div");
   emptyDiv.textContent = comment;
   bookmarksContainer.appendChild(emptyDiv);
- }
+}
 
-
-
-
-let bookmarksIndex = []
+let bookmarksIndex = [];
 function renderSearch(bookmarks) {
   for (const bookmark of bookmarks) {
-    bookmarksIndex.push(bookmark)
-    if (bookmark.children){
-      renderSearch(bookmark.children)
+    bookmarksIndex.push(bookmark);
+    if (bookmark.children) {
+      renderSearch(bookmark.children);
     }
   }
 }
 
-
 const searchBox = document.getElementById("search-box");
 searchBox.addEventListener("input", () => {
-
-  if (searchBox.value === ''){
+  if (searchBox.value === "") {
     clearExistingContents();
     newBookmarkBtn.style.transform = "translateY(-250%)";
-  }
-  else{
+  } else {
     newBookmarkBtn.style.transform = "translateY(0%)";
-    const searchText = (searchBox.value).toLowerCase();// Replace with the text you want to search for
-  const regex = new RegExp(searchText, 'i'); // 'i' flag for case-insensitive search
-  const matchingTitleEntries = bookmarksIndex.filter((bookmarkDetails) => {
-    return regex.test(bookmarkDetails.title && bookmarkDetails.title !== '') || regex.test(bookmarkDetails.url);
-  });
-  
-  
-  clearExistingContents();
- for (const bookmark of matchingTitleEntries){
-  const bgColor =  getRandomAlphaMaterialColor('0.5')
-  createElements(bookmark, bgColor, removeBtns = false)
+    const searchText = searchBox.value.toLowerCase(); // Replace with the text you want to search for
+    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
+    const matchingTitleEntries = bookmarksIndex.filter((bookmarkDetails) => {
+      return (
+        regex.test(bookmarkDetails.title && bookmarkDetails.title !== "") ||
+        regex.test(bookmarkDetails.url)
+      );
+    });
+
+    clearExistingContents();
+    for (const bookmark of matchingTitleEntries) {
+      const bgColor = getRandomAlphaMaterialColor("0.5");
+      createElements(bookmark, bgColor, (removeBtns = false));
     }
 
- 
-
-  if (matchingTitleEntries.length === 0){
-    createZeroDiv("No results");
+    if (matchingTitleEntries.length === 0) {
+      createZeroDiv("No results");
+    }
   }
-  }
- 
 });
 
 chrome.bookmarks.getTree(function (bookmarks) {
   const bgColor = "#1d1f1f";
   renderBookmarks(bookmarks, bgColor);
+  renderSearch(bookmarks);
 });
 
-
-
-console.log(chrome); // Log the chrome object to the console
 chrome.history.search({ text: "", maxResults: 50 }, (historyItems) => {
-  console.log(historyItems)
-  const recentHistory = document.createElement('button')
-  recentHistory.textContent = 'History | (Read-Only)'
-  bookmarksContainer.appendChild(recentHistory)
-  const sortedHistoryItems = historyItems.sort((a, b) => b.visitCount - a.visitCount)
-  for (const history of sortedHistoryItems){
-    console.log(history) 
-  createElements(history, removeBtns = true)
+  const recentHistory = document.createElement("button");
+  recentHistory.textContent = "History | (Read-Only)";
+  bookmarksContainer.appendChild(recentHistory);
+  const sortedHistoryItems = historyItems.sort(
+    (a, b) => b.visitCount - a.visitCount
+  );
+  for (const history of sortedHistoryItems) {
+    createElements(history, (removeBtns = true));
   }
 });
