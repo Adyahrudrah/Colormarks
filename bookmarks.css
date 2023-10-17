@@ -74,7 +74,7 @@ body {
   justify-content: center;
   transition: opacity 0.3s ease;
   max-width: 300px;
-  box-shadow: 0 0 3px 5cap rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 3px 5px rgba(0, 0, 0, 0.1);
   /* outline: 2px solid rgba(0, 0, 0, 0.3);
   outline-offset: -3px; */
 }
