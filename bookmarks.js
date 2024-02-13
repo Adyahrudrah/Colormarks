@@ -238,77 +238,88 @@ function createElements(bookmarkChildren, removeBtns = false) {
   });
 
   let counter = 1;
-  link.addEventListener("click", function (e) {
-    if (MOST_VISITED_COUNT && MOST_VISITED_COUNT.length > 0) {
-      const existingEntry = MOST_VISITED_COUNT.find(
-        (countDetails) => link.href === countDetails.site
-      );
+  link.addEventListener("click", handlebookmark);
 
-      if (existingEntry) {
-        existingEntry.counter += 1;
+  function handlebookmark(e){
+      if (MOST_VISITED_COUNT && MOST_VISITED_COUNT.length > 0) {
+        const existingEntry = MOST_VISITED_COUNT.find(
+          (countDetails) => link.href === countDetails.site
+        );
+  
+        if (existingEntry) {
+          existingEntry.counter += 1;
+        } else {
+          MOST_VISITED_COUNT.push({
+            site: link.href,
+            counter: 1,
+            bookmark: bookmarkChildren,
+          });
+        }
+  
+        localStorage.setItem(
+          "mostVisitedCounter",
+          JSON.stringify(MOST_VISITED_COUNT)
+        );
       } else {
         MOST_VISITED_COUNT.push({
           site: link.href,
-          counter: 1,
+          counter: counter,
           bookmark: bookmarkChildren,
         });
+        localStorage.setItem(
+          "mostVisitedCounter",
+          JSON.stringify(MOST_VISITED_COUNT)
+        );
       }
-
-      localStorage.setItem(
-        "mostVisitedCounter",
-        JSON.stringify(MOST_VISITED_COUNT)
-      );
-    } else {
-      MOST_VISITED_COUNT.push({
-        site: link.href,
-        counter: counter,
-        bookmark: bookmarkChildren,
-      });
-      localStorage.setItem(
-        "mostVisitedCounter",
-        JSON.stringify(MOST_VISITED_COUNT)
-      );
-    }
-    e.preventDefault();
-
-    chrome.tabs.create({ url: link.href }, function (newTab) {
-      const bgImg = localStorage.getItem(link.hostname);
-      if (bgImg) {
-        return;
-      } else {
-        chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-          if (changeInfo.status === "complete") {
-            chrome.tabs.query({ active: true }, function (tabs) {
-              const activeTab = tabs[0];
-              if (
-                activeTab &&
-                activeTab.id === tabId &&
-                link.href === activeTab.url
-              ) {
-                const faviconUrl = activeTab.favIconUrl
-                  ? activeTab.favIconUrl
-                  : "Not available";
-                imgHolder.style.backgroundImage = `url(${faviconUrl})`;
-                imgHolder.style.color = "transparent";
-                try {
-                  localStorage.setItem(link.hostname, faviconUrl);
-                } catch (error) {
-                  console.error(
-                    "Error storing favicon URL in local storage:",
-                    error
-                  );
+      e.preventDefault();
+  
+      chrome.tabs.create({ url: link.href }, function (newTab) {
+        const bgImg = localStorage.getItem(link.hostname);
+        if (bgImg) {
+          return;
+        } else {
+          chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+            if (changeInfo.status === "complete") {
+              chrome.tabs.query({ active: true }, function (tabs) {
+                const activeTab = tabs[0];
+                console.log(activeTab)
+                if (
+                  activeTab &&
+                  activeTab.id === tabId &&
+                  link.href === activeTab.url
+                ) {
+                  const faviconUrl = activeTab.favIconUrl
+                    ? activeTab.favIconUrl
+                    : null
+                    fetch(faviconUrl)
+                    .then(response => {
+                      if (response.ok) {
+                        console.log(response)
+                      }
+                    });
+                    if (faviconUrl){
+                      imgHolder.style.backgroundImage = `url(${faviconUrl})`;
+                      imgHolder.style.color = "transparent";
+                      try {
+                        localStorage.setItem(link.hostname, faviconUrl);
+                      } catch (error) {
+                        console.error(
+                          "Error storing favicon URL in local storage:",
+                          error
+                        );
+                      }
+                    }
+                } else {
+                  typeof title_raw[0] === "string"
+                    ? (imgHolder.textContent = title_raw[0].toUpperCase())
+                    : title_raw[0];
                 }
-              } else {
-                typeof title_raw[0] === "string"
-                  ? (imgHolder.textContent = title_raw[0].toUpperCase())
-                  : title_raw[0];
-              }
-            });
-          }
-        });
-      }
-    });
-  });
+              });
+            }
+          });
+        }
+      });
+    }
 
   if (!removeBtns) {
     const deleteBookmarkBtn = document.createElement("button");
