@@ -12,6 +12,7 @@ function renderBookmarks(bookmarks, bgColor) {
           "bookmarks-title-container"
         );
         const titleBtn = document.createElement("button");
+        titleBtn.classList.add('titleBtn')
         const title = bookmark.title || "root";
         titleBtn.textContent = title;
         if (titleBtn.textContent === "root") {
@@ -130,6 +131,7 @@ function renderBookmarks(bookmarks, bgColor) {
           if (TitleBtnFlow) {
             clearExistingContents();
             renderBookmarksHeadsandLinks(bookmark, bgColor);
+            bookmarksContainer.scrollTop = 0;
           }
         });
         let bgColorNew = getRandomAlphaMaterialColor("0.5");
@@ -176,15 +178,15 @@ function createElements(bookmarkChildren, removeBtns = false) {
   const li = document.createElement("li");
   const link = document.createElement("a");
   const title_raw = bookmarkChildren.title || "";
-  const regexValPartOne = /(.*)[|:-](.*)/;
-  const regexedPartOne = title_raw.replace(regexValPartOne, "$1");
-  const regexedPartTwo = title_raw.replace(regexValPartOne, "$2");
+  const regexValPartOne = /([^-/|:]+)[-/|:](.+)/;
+  const regexedPartOne = title_raw.replace(regexValPartOne, (match, p1) => p1.charAt(0).toUpperCase() + p1.slice(1));
+  const regexedPartTwo = title_raw.replace(regexValPartOne, "$2").replace(/https:.+/g, '').split(/[:]/).map(phrase => phrase).join(' ');
   link.href = bookmarkChildren.url;
 
   if (regexedPartTwo !== regexedPartOne) {
-    link.textContent = regexedPartOne;
+    link.textContent = regexedPartOne + " | " ;
     const spanText = document.createElement("span");
-    spanText.textContent = " | " + regexedPartTwo;
+    spanText.textContent = regexedPartTwo;
     link.appendChild(spanText);
   } else {
     link.textContent = title_raw;
