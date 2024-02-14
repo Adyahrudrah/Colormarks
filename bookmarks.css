@@ -360,12 +360,13 @@ span.tagline{
 .search-box {
   padding: 0.5rem;
   color: rgba(255,255,255, 0.3);
-  border-radius: 10px;
+  border-radius: 15px;
   outline: none;
   border: none;
   background-color: #1d1f1f;
   text-align: center;
   font-size: clamp(0.5rem, 1rem, 1.2rem);
+  width: 30%;
 }
 
 .search-box::placeholder {

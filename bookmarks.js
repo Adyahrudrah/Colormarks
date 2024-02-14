@@ -499,7 +499,9 @@ const debounce = (func, delay) => {
 // Adjust your event listener to use the debounce function
 searchBox.addEventListener("input", debounce(() => {
   if (searchBox.value === "") {
-    clearExistingContents();
+    setTimeout(() => {
+      document.querySelector('.rootBar').click();
+    }, 50);
     newBookmarkBtn.style.transform = "translateY(-250%)";
   } else {
     newBookmarkBtn.style.transform = "translateY(0%)";
@@ -512,11 +514,19 @@ searchBox.addEventListener("input", debounce(() => {
         regex.test(bookmarkDetails.url) 
       );
     }); 
-    clearExistingContents();
+    clearExistingContents()
     for (const bookmark of matchingTitleEntries) {
       const bgColor = getRandomAlphaMaterialColor("0.5");
       createElements(bookmark, bgColor, (removeBtns = false));
     }
+
+ 
+      chrome.history.search({ text: searchText, maxResults: 50 }, (historyItems) => {
+        for (const history of historyItems) {
+          createElements(history, (removeBtns = true));
+        }
+      });
+  
 
     if (matchingTitleEntries.length === 0) {
       createZeroDiv("No results");
