@@ -72,7 +72,7 @@ body {
   border: none;
   background-color: rgba(0, 0, 0, 0.4);
   color: rgba(255, 255, 255, 0.4);
-  text-shadow: 1px 1px rgba(0,0,0, 0.3);
+  text-shadow: 1px 1px rgba(0,0,0, 0.5);
   border-radius: 5px;
   padding: 0.5rem;
   font-size: 1.1rem;
@@ -359,25 +359,27 @@ body {
   border: none;
   outline: transparent;
   background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 5px;
-  padding: 10;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
   transform: translateY(-250%);
   z-index: 0;
-  transition: transform 1s ease;
+  transition: transform 0.3s ease;
 }
 
 .search-box {
-  padding: 5px;
-  border-radius: 5px;
+  padding: 0.5rem;
+  color: rgba(255,255,255, 0.6);
+  border-radius: 15px;
   outline: none;
   border: none;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0,0,0,0.3);
   text-align: center;
   font-size: clamp(0.5rem, 1rem, 1.2rem);
 }
 
 .search-box::placeholder {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255,255,255, 0.6);
   font-weight: bold;
   font-variant: small-caps;
 }
@@ -402,7 +404,7 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(0%, -50%);
   font-size: 1em;
   color: rgba(255, 255, 255, 0.3);
   font-style: italic;

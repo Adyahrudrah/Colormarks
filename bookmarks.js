@@ -477,7 +477,7 @@ mostVisited.addEventListener("click", () => {
 
 function createZeroDiv(comment) {
   const bookmarksContainer = document.querySelector(".bookmarks-container");
-  const emptyDiv = document.createElement("div");
+  const emptyDiv = document.createElement("p");
   emptyDiv.classList.add("empty-div");
   emptyDiv.textContent = comment;
   bookmarksContainer.appendChild(emptyDiv);
