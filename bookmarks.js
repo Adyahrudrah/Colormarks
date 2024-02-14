@@ -46,7 +46,7 @@ function renderBookmarks(bookmarks, bgColor) {
         if (titleBtnBgColor !== undefined) {
           prevBtnColor = titleBtnBgColor;
         }
-        titleBtn.style.borderColor = prevBtnColor;
+        titleBtn.style.backgroundColor = '#1d1f1f';
         titleBtn.style.color = prevBtnColor
         bookmarksTitleContainer.appendChild(titleBtn);
 
@@ -60,7 +60,6 @@ function renderBookmarks(bookmarks, bgColor) {
 
           if (bookmark.children.length !== 0) {
             titleBtn.contentEditable = "True";
-            titleBtn.focus();
             const range = document.createRange();
             range.selectNodeContents(titleBtn);
             const selection = window.getSelection();
@@ -187,6 +186,7 @@ function createElements(bookmarkChildren, removeBtns = false) {
   if (regexedPartTwo !== regexedPartOne) {
     link.textContent = regexedPartOne + " | " ;
     const spanText = document.createElement("span");
+    spanText.classList.add('tagline')
     spanText.textContent = regexedPartTwo;
     link.appendChild(spanText);
   } else {
@@ -374,17 +374,17 @@ function createElements(bookmarkChildren, removeBtns = false) {
 const materialColors = [
   "#f44336",
   "#e91e63",
+  "#9c27b0",
+  "#673ab7",
+  "#3f51b5",
   "#2196f3",
   "#03a9f4",
   "#00bcd4",
   "#009688",
   "#4caf50",
   "#8bc34a",
-  "#cddc39",
-  "#ffc107",
   "#ff9800",
-  "#ff5722",
-  "#FF6969",
+  "#ff5722"
 ];
 
 function getRandomAlphaMaterialColor(alpha) {
