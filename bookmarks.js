@@ -39,15 +39,14 @@ function renderBookmarks(bookmarks, bgColor) {
           createDividerLine();
 
           do {
-            titleBtnBgColor = getRandomAlphaMaterialColor("0.5");
+            titleBtnBgColor = getRandomAlphaMaterialColor("0.2");
           } while (titleBtnBgColor === prevBtnColor);
         }
 
         if (titleBtnBgColor !== undefined) {
           prevBtnColor = titleBtnBgColor;
         }
-        titleBtn.style.backgroundColor = '#1d1f1f';
-        titleBtn.style.color = prevBtnColor
+        titleBtn.style.backgroundColor = prevBtnColor;
         bookmarksTitleContainer.appendChild(titleBtn);
 
         titleBtn.draggable = "True";
@@ -70,7 +69,6 @@ function renderBookmarks(bookmarks, bgColor) {
             deleteTitle.classList.add("delete-title-btn");
             deleteTitle.textContent = "x";
             titleBtn.insertAdjacentElement("afterend", deleteTitle);
-            deleteTitle.style.backgroundColor = "tomato";
 
             deleteTitle.addEventListener("click", () => {
               const idTobeDeleted = bookmark.id;
@@ -283,7 +281,6 @@ function createElements(bookmarkChildren, removeBtns = false) {
             if (changeInfo.status === "complete") {
               chrome.tabs.query({ active: true }, function (tabs) {
                 const activeTab = tabs[0];
-                console.log(activeTab)
                 if (
                   activeTab &&
                   activeTab.id === tabId &&
@@ -292,12 +289,6 @@ function createElements(bookmarkChildren, removeBtns = false) {
                   const faviconUrl = activeTab.favIconUrl
                     ? activeTab.favIconUrl
                     : null
-                    fetch(faviconUrl)
-                    .then(response => {
-                      if (response.ok) {
-                        console.log(response)
-                      }
-                    });
                     if (faviconUrl){
                       imgHolder.style.backgroundImage = `url(${faviconUrl})`;
                       imgHolder.style.color = "transparent";
@@ -494,21 +485,33 @@ function renderSearch(bookmarks) {
 }
 
 const searchBox = document.getElementById("search-box");
-searchBox.addEventListener("input", () => {
+
+const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(null, args);
+    }, delay);
+  };
+};
+
+// Adjust your event listener to use the debounce function
+searchBox.addEventListener("input", debounce(() => {
   if (searchBox.value === "") {
     clearExistingContents();
     newBookmarkBtn.style.transform = "translateY(-250%)";
   } else {
     newBookmarkBtn.style.transform = "translateY(0%)";
-    const searchText = searchBox.value.toLowerCase(); // Replace with the text you want to search for
-    const regex = new RegExp(searchText, "i"); // 'i' flag for case-insensitive search
+    const searchText = searchBox.value.toLowerCase();
+    const regex = new RegExp(searchText, "i");
     const matchingTitleEntries = bookmarksIndex.filter((bookmarkDetails) => {
       return (
         regex.test(bookmarkDetails.title && bookmarkDetails.title !== "") ||
-        regex.test(bookmarkDetails.url)
+        regex.test(bookmarkDetails.title) ||
+        regex.test(bookmarkDetails.url) 
       );
-    });
-
+    }); 
     clearExistingContents();
     for (const bookmark of matchingTitleEntries) {
       const bgColor = getRandomAlphaMaterialColor("0.5");
@@ -519,7 +522,7 @@ searchBox.addEventListener("input", () => {
       createZeroDiv("No results");
     }
   }
-});
+}, 300));
 
 chrome.bookmarks.getTree(function (bookmarks) {
   const bgColor = "#1d1f1f";
