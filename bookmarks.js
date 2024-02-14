@@ -46,7 +46,8 @@ function renderBookmarks(bookmarks, bgColor) {
         if (titleBtnBgColor !== undefined) {
           prevBtnColor = titleBtnBgColor;
         }
-        titleBtn.style.backgroundColor = prevBtnColor;
+        titleBtn.style.borderColor = prevBtnColor;
+        titleBtn.style.color = prevBtnColor
         bookmarksTitleContainer.appendChild(titleBtn);
 
         titleBtn.draggable = "True";
