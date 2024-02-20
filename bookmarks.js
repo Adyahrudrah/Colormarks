@@ -175,10 +175,10 @@ function renderBookmarksHeadsandLinks(bookmark) {
 function createElements(bookmarkChildren, removeBtns = false) {
   const li = document.createElement("li");
   const link = document.createElement("a");
-  const title_raw = bookmarkChildren.title || "";
-  const regexValPartOne = /([^-/|:]+)[-/|:](.+)/;
+  const title_raw = bookmarkChildren.title || (bookmarkChildren.url).replace(/(https|http):\/\//g,'').replace('/', '');
+  const regexValPartOne = /([^-|]+)[-|](.+)/;
   const regexedPartOne = title_raw.replace(regexValPartOne, (match, p1) => p1.charAt(0).toUpperCase() + p1.slice(1));
-  const regexedPartTwo = title_raw.replace(regexValPartOne, "$2").replace(/https:.+/g, '').split(/[:]/).map(phrase => phrase).join(' ');
+  const regexedPartTwo = title_raw.replace(regexValPartOne, "$2");
   link.href = bookmarkChildren.url;
 
   if (regexedPartTwo !== regexedPartOne) {
