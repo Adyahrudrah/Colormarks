@@ -1,34 +1,27 @@
 {
-    "manifest_version": 3,
-    "name": "Bookmark Manager",
-    "version": "1.0",
-    "description": "Manage your bookmarks with this extension.",
-    "permissions": [
-      "bookmarks",
-      "tabs",
-      "activeTab",
-      "storage",
-      "history"
-    ],
-    "web_accessible_resources": [
-      {
-        "resources": ["_favicon/*"],
-        "matches": ["<all_urls>"],
-        "extension_ids": ["*"]
-      }
-    ],
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon" : {"64" : "brand_icon.png"}
-    },
-    "background": {
-      "service_worker" : "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": [ "popup.js"]
-      }
-    ]
-  }
-  
+  "manifest_version": 3,
+  "name": "Bookmark Manager",
+  "version": "1.0",
+  "description": "Manage your bookmarks with this extension.",
+  "permissions": ["bookmarks", "tabs", "activeTab", "storage", "history"],
+  "web_accessible_resources": [
+    {
+      "resources": ["_favicon/*"],
+      "matches": ["<all_urls>"],
+      "extension_ids": ["*"]
+    }
+  ],
+  "chrome_url_overrides": {
+    "newtab": "bookmarks.html"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": { "64": "brand_icon.png" }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["popup.js"]
+    }
+  ]
+}
