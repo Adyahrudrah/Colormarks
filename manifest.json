@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Bookmark Manager",
+  "name": "Colormarks",
   "version": "1.0",
   "description": "Manage your bookmarks with this extension.",
   "permissions": ["bookmarks", "tabs", "activeTab", "storage", "history"],
@@ -11,6 +11,15 @@
       "extension_ids": ["*"]
     }
   ],
+  "icons": {
+    "16": "images/icon16.png",
+    "19": "images/icon19.png",
+    "32": "images/icon32.png",
+    "38": "images/icon38.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+
   "chrome_url_overrides": {
     "newtab": "bookmarks.html"
   },
